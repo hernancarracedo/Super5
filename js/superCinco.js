@@ -24,15 +24,17 @@ class Producto {
         return(cant<= this.stock);
     }
 
-    venderProducto(cant) {
+    venderProducto(cant, formaDePago, montoCuota) {
         this.cant = cant;
+        this.formaDePago = formaDePago;
+        this.montoCuota = montoCuota;
         this.stock = this.stock - this.cant;
         barraMensajes.firstElementChild.remove();
         let mensaje = document.createElement('div');
-        mensaje.innerHTML = `<div class="alert alert-success">se vendieron `+ this.cant +` unidades de ` + this.nombre + ` unidades actualmente disponbibles: ` + this.stock +`</div>`;
+        mensaje.innerHTML = `<div class="alert alert-success">se vendieron <strong>`+ this.cant +` unidades</strong> de <strong>` + this.nombre + `</strong> <BR>FORMA PAGO: <strong>` + this.formaDePago + `</strong> MONTO CUOTA: <strong>$ ` + this.montoCuota + `</strong></div>`;
         barraMensajes.appendChild(mensaje);
         barraMensajes.style.display = 'block';
-        $('#mensajero').delay(3000).fadeOut(1000); 
+        $('#mensajero').delay(4000).fadeOut(500); 
     }
 }
 
@@ -80,31 +82,35 @@ function registrarVenta(producto, cantidad, formaPago){
     let precioProducto = productosDelLocal[producto].precio;
     let importeVenta = precioProducto * cantidad;
     let montoCuota;
+    let formaDePago;
     
     switch (formaPago) {
         case 'efectivo':
           console.log('Seleccionó pago en efectivo');
+          formaDePago = 'EFECTIVO';
           montoCuota = importeVenta;
           break;
         case 'tarjeta3':
           console.log('Seleccionó pago con tarjeta en 3 cuotas');
+          formaDePago = 'TARJ 3 CUOTAS';
           montoCuota = aDosDecimales(importeVenta / 3);
           break;
-        case 'tarjeta':
+        case 'tarjeta6':
           console.log('Seleccionó pago con tarjeta en 6 cuotas');
+          formaDePago = 'TARJ 6 CUOTAS';
           montoCuota = aDosDecimales(importeVenta / 6);
           break;
     }
     
     console.log ('valor de cuota: '+ montoCuota);
-    productosDelLocal[producto].venderProducto(cantidad);
+    productosDelLocal[producto].venderProducto(cantidad, formaDePago, montoCuota);
     Caja.actualizarSaldoCaja(importeVenta);
     Caja.actualizarSaldoCajaEnPantalla();
     refrescarListaStockDeProductos();
     refrescarListaDesplegableProductos();
 
-    barraMensajes.style.display = 'block';
-    $('#mensajero').delay(3000).fadeOut(1000);
+    //barraMensajes.style.display = 'block';
+    //$('#mensajero').delay(3000).fadeOut(1000);
 }
 
 function refrescarListaStockDeProductos(){ // funcion de UI //
